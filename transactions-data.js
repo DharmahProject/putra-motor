@@ -1,0 +1,9 @@
+window.TRANSACTION_DATA = [
+  { id: 'TRX-2026-0118', date: '05 Nov 2026', customer: 'Budi Santoso', phone: '0812 3456 7890', vehicle: 'Toyota Avanza Veloz', plate: 'B 1234 SJK', service: 'Servis Berkala + Bubut', total: 885000, status: 'Lunas', payment: 'Tunai', odometer: '68.520' },
+  { id: 'TRX-2026-0117', date: '05 Nov 2026', customer: 'Rina Wulandari', phone: '0813 7744 9210', vehicle: 'Honda Brio', plate: 'B 1765 KZP', service: 'Ganti Oli + Filter Oli', total: 420000, status: 'Belum Bayar', payment: 'Transfer', odometer: '42.180' },
+  { id: 'TRX-2026-0116', date: '04 Nov 2026', customer: 'Andi Pratama', phone: '0857 2012 8811', vehicle: 'Suzuki XL7', plate: 'B 2890 TQA', service: 'Servis Berkala (40.000 Km)', total: 1280000, status: 'Lunas', payment: 'QRIS', odometer: '40.125' },
+  { id: 'TRX-2026-0115', date: '04 Nov 2026', customer: 'Dewi Lestari', phone: '0819 3355 6612', vehicle: 'Mitsubishi Xpander', plate: 'B 1654 NBP', service: 'Perbaikan Rem (Ganti Kampas)', total: 980000, status: 'Belum Bayar', payment: 'Tunai', odometer: '51.340' },
+  { id: 'TRX-2026-0114', date: '03 Nov 2026', customer: 'Agus Setiawan', phone: '0878 9221 1180', vehicle: 'Toyota Rush', plate: 'B 1408 FNL', service: 'Ganti Aki + Cek Kelistrikan', total: 1050000, status: 'Lunas', payment: 'Transfer', odometer: '76.900' },
+  { id: 'TRX-2026-0113', date: '03 Nov 2026', customer: 'Siti Rahmawati', phone: '0812 9001 4433', vehicle: 'Daihatsu Terios', plate: 'B 1973 PLY', service: 'Servis Ringan + Tune Up', total: 650000, status: 'Belum Bayar', payment: 'QRIS', odometer: '35.620' },
+  { id: 'TRX-2026-0112', date: '02 Nov 2026', customer: 'Hadi Susanto', phone: '0821 5500 7821', vehicle: 'Honda HR-V', plate: 'B 2301 MKB', service: 'Diagnosa Mesin (Scanning)', total: 350000, status: 'Belum Bayar', payment: 'Tunai', odometer: '28.410' }
+];
