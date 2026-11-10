@@ -4,6 +4,29 @@ Database: `bengkel_pos`
 
 Jalankan berurutan di MySQL. Query yang sama dipakai Laravel lewat migration dan seeder.
 
+Untuk database production Putra Motor, pilih `morh9212_putra_motor` sebagai
+pengganti `bengkel_pos` pada perintah `USE`.
+
+## Session login untuk deployment stateless
+
+```sql
+CREATE TABLE IF NOT EXISTS pos_sessions (
+  id VARCHAR(128) NOT NULL,
+  payload LONGBLOB NOT NULL,
+  last_activity INT UNSIGNED NOT NULL,
+  PRIMARY KEY (id),
+  KEY pos_sessions_last_activity_index (last_activity)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+```
+
+Jika upload logo akan digunakan di Vercel, jalankan sekali:
+
+```sql
+ALTER TABLE profiles
+  ADD COLUMN logo_data LONGBLOB NULL AFTER logo_path,
+  ADD COLUMN logo_mime VARCHAR(100) NULL AFTER logo_data;
+```
+
 ## Buat database
 
 ```sql

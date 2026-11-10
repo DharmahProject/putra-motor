@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use App\Models\User;
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response;
 
 class RequirePosLogin
@@ -37,7 +38,15 @@ class RequirePosLogin
         }
 
         if (session_status() !== PHP_SESSION_ACTIVE) {
-            session_save_path(storage_path('framework/auth_sessions'));
+            if (env('POS_SESSION_DRIVER', getenv('VERCEL') ? 'database' : 'file') === 'database') {
+                require_once base_path('../includes/auth_session.php');
+                \configure_database_session(
+                    DB::connection()->getPdo(),
+                    max(60, (int) env('SESSION_LIFETIME', 120)) * 60
+                );
+            } else {
+                session_save_path(storage_path('framework/auth_sessions'));
+            }
             session_id($sessionId);
             session_start(['read_and_close' => true]);
         }

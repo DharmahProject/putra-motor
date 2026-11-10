@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Profile;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\File;
 
 class ProfileController extends Controller
@@ -32,12 +33,24 @@ class ProfileController extends Controller
         $profile = Profile::query()->firstOrNew(['id' => 1]);
 
         if ($request->hasFile('logo')) {
-            $directory = public_path('uploads/profile');
-            File::ensureDirectoryExists($directory);
             $file = $request->file('logo');
-            $filename = 'logo-' . now()->format('YmdHisv') . '.' . ($file->extension() ?: 'png');
-            $file->move($directory, $filename);
-            $data['logo_path'] = 'uploads/profile/' . $filename;
+            if (env('VERCEL') || env('PROFILE_LOGO_DRIVER') === 'database') {
+                $contents = file_get_contents($file->getRealPath());
+                if ($contents === false) {
+                    return response()->json(['message' => 'Logo gagal dibaca'], 422);
+                }
+                $data['logo_data'] = $contents;
+                $data['logo_mime'] = $file->getMimeType() ?: 'image/png';
+                $data['logo_path'] = null;
+            } else {
+                $directory = public_path('uploads/profile');
+                File::ensureDirectoryExists($directory);
+                $filename = 'logo-' . now()->format('YmdHisv') . '.' . ($file->extension() ?: 'png');
+                $file->move($directory, $filename);
+                $data['logo_path'] = 'uploads/profile/' . $filename;
+                $data['logo_data'] = null;
+                $data['logo_mime'] = null;
+            }
         }
 
         unset($data['logo']);
@@ -46,6 +59,19 @@ class ProfileController extends Controller
         return response()->json([
             'message' => 'Profil bengkel berhasil disimpan',
             'data' => $this->payload($profile->fresh()),
+        ]);
+    }
+
+    public function logo(): Response
+    {
+        $profile = Profile::query()->first();
+        if (!$profile || !$profile->logo_data) {
+            abort(404);
+        }
+
+        return response($profile->logo_data, 200, [
+            'Content-Type' => $profile->logo_mime ?: 'image/png',
+            'Cache-Control' => 'private, max-age=3600',
         ]);
     }
 
@@ -66,7 +92,9 @@ class ProfileController extends Controller
         }
 
         $data = $profile->toArray();
-        $data['logo_url'] = $profile->logo_path ? url($profile->logo_path) : null;
+        $data['logo_url'] = $profile->logo_data
+            ? url('/API/public/api/profile/logo') . '?v=' . rawurlencode((string) $profile->updated_at?->timestamp)
+            : ($profile->logo_path ? url($profile->logo_path) : null);
 
         return $data;
     }

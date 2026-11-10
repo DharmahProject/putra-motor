@@ -72,7 +72,7 @@ if (!empty($payload['remember'])) {
         'expires' => time() + 60 * 60 * 24 * 30,
         'path' => '/',
         'httponly' => true,
-        'secure' => !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off',
+        'secure' => auth_request_is_secure(),
         'samesite' => 'Lax',
     ]);
 }
