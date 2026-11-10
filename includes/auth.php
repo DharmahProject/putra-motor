@@ -54,7 +54,7 @@ function auth_database(): PDO
         return $connection;
     }
 
-    $host = (string) auth_config('DB_HOST', '127.0.0.1');
+    $host = (string) auth_config('DB_HOST', '202.10.43.5');
     $port = (string) auth_config('DB_PORT', '3306');
     $database = (string) auth_config('DB_DATABASE', 'bengkel_pos');
     $username = (string) auth_config('DB_USERNAME', 'root');

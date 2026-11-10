@@ -22,7 +22,7 @@ APP_DEBUG=false
 APP_URL=https://domain-vercel-anda.vercel.app
 
 DB_CONNECTION=mysql
-DB_HOST=HOST_MYSQL_REMOTE_DARI_HOSTINGER
+DB_HOST=202.10.43.5
 DB_PORT=3306
 DB_DATABASE=morh9212_putra_motor
 DB_USERNAME=morh9212_putra_motor
