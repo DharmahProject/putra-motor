@@ -7,6 +7,29 @@ define('LARAVEL_START', microtime(true));
 
 /*
 |--------------------------------------------------------------------------
+| Deployment container (Vercel / FrankenPHP)
+|--------------------------------------------------------------------------
+|
+| Di container, folder public ini disajikan pada URL /API/public/*. Server
+| memotong awalan itu untuk memilih file, tetapi PHP tetap menerima URL asli
+| di REQUEST_URI sehingga Laravel mencari route "API/public/api/...".
+| Buang awalan tersebut agar route /api/... ditemukan. Di XAMPP URL diawali
+| nama folder proyek, jadi blok ini tidak berpengaruh.
+|
+*/
+
+$containerPrefix = '/API/public';
+$requestUri = (string) ($_SERVER['REQUEST_URI'] ?? '');
+if (strncmp($requestUri, $containerPrefix, strlen($containerPrefix)) === 0) {
+    $remainder = substr($requestUri, strlen($containerPrefix));
+    if ($remainder === '' || $remainder[0] === '/' || $remainder[0] === '?') {
+        $_SERVER['REQUEST_URI'] = ($remainder === '' || $remainder[0] === '?' ? '/' : '') . $remainder;
+    }
+}
+unset($containerPrefix, $requestUri, $remainder);
+
+/*
+|--------------------------------------------------------------------------
 | Check If The Application Is Under Maintenance
 |--------------------------------------------------------------------------
 |
