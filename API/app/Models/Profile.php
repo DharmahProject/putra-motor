@@ -15,5 +15,11 @@ class Profile extends Model
         'bank_2_account_name',
         'bank_2_account',
         'logo_path',
+        'logo_data',
+        'logo_mime',
+    ];
+
+    protected $hidden = [
+        'logo_data',
     ];
 }

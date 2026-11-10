@@ -1,0 +1,25 @@
+:{$PORT:80} {
+    encode zstd gzip
+
+    route {
+        # Keep the public API URLs used by the existing JavaScript unchanged.
+        handle_path /API/public/* {
+            root * /app/API/public
+            php_server {
+                try_files {path} index.php
+            }
+        }
+
+        # Application internals must never be served as static files.
+        @private path /API/* /includes/* /.env* /.git* /.dockerignore /Caddyfile /Dockerfile* /vercel.json
+        respond @private 404
+
+        # Serve the existing PHP UI and its root-level CSS, JS, and images.
+        handle {
+            root * /app
+            php_server {
+                try_files {path} index.php
+            }
+        }
+    }
+}

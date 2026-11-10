@@ -14,6 +14,7 @@ Route::middleware('pos.login')->group(function () {
     Route::get('master-sparepart', [MasterSparepartController::class, 'index']);
     Route::get('master-jasa', [MasterJasaController::class, 'index']);
     Route::get('profile', [ProfileController::class, 'show']);
+    Route::get('profile/logo', [ProfileController::class, 'logo']);
 });
 
 Route::middleware('pos.login:Sparepart')->group(function () {

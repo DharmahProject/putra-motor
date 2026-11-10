@@ -29,7 +29,7 @@ function normalize_whatsapp_number(string $phone): string
 
 function reset_configuration(): array
 {
-    return parse_ini_file(__DIR__ . '/API/.env', false, INI_SCANNER_RAW) ?: [];
+    return auth_configuration();
 }
 
 function reset_public_url(array $config): string
@@ -38,7 +38,7 @@ function reset_public_url(array $config): string
     if ($configured !== '') {
         return rtrim($configured, '/');
     }
-    $secure = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
+    $secure = auth_request_is_secure();
     $scheme = $secure ? 'https' : 'http';
     $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
     $directory = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? '/'));

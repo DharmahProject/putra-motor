@@ -1,18 +1,50 @@
 <?php
 
-if (session_status() !== PHP_SESSION_ACTIVE) {
-    $sessionDirectory = dirname(__DIR__) . '/API/storage/framework/auth_sessions';
-    if (!is_dir($sessionDirectory)) {
-        mkdir($sessionDirectory, 0775, true);
+require_once __DIR__ . '/auth_session.php';
+
+function auth_configuration(): array
+{
+    static $configuration;
+    if (is_array($configuration)) {
+        return $configuration;
     }
-    session_save_path($sessionDirectory);
-    session_set_cookie_params([
-        'httponly' => true,
-        'secure' => !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off',
-        'samesite' => 'Lax',
-        'path' => '/',
-    ]);
-    session_start();
+
+    $envFile = dirname(__DIR__) . '/API/.env';
+    $configuration = is_file($envFile)
+        ? (parse_ini_file($envFile, false, INI_SCANNER_RAW) ?: [])
+        : [];
+
+    foreach (array_keys($configuration) as $key) {
+        $value = getenv((string) $key);
+        if ($value !== false) {
+            $configuration[$key] = $value;
+        }
+    }
+
+    foreach ([
+        'DB_HOST', 'DB_PORT', 'DB_DATABASE', 'DB_USERNAME', 'DB_PASSWORD',
+        'POS_SESSION_DRIVER', 'SESSION_LIFETIME', 'POS_APP_URL',
+        'FONNTE_API_URL', 'FONNTE_TOKEN',
+    ] as $key) {
+        $value = getenv($key);
+        if ($value !== false) {
+            $configuration[$key] = $value;
+        }
+    }
+
+    return $configuration;
+}
+
+function auth_config(string $key, mixed $default = null): mixed
+{
+    return auth_configuration()[$key] ?? $default;
+}
+
+function auth_request_is_secure(): bool
+{
+    $forwardedProto = strtolower(trim(explode(',', (string) ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? ''))[0]));
+
+    return (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $forwardedProto === 'https';
 }
 
 function auth_database(): PDO
@@ -22,12 +54,11 @@ function auth_database(): PDO
         return $connection;
     }
 
-    $config = parse_ini_file(dirname(__DIR__) . '/API/.env', false, INI_SCANNER_RAW) ?: [];
-    $host = $config['DB_HOST'] ?? '127.0.0.1';
-    $port = $config['DB_PORT'] ?? '3306';
-    $database = $config['DB_DATABASE'] ?? 'bengkel_pos';
-    $username = $config['DB_USERNAME'] ?? 'root';
-    $password = $config['DB_PASSWORD'] ?? '';
+    $host = (string) auth_config('DB_HOST', '127.0.0.1');
+    $port = (string) auth_config('DB_PORT', '3306');
+    $database = (string) auth_config('DB_DATABASE', 'bengkel_pos');
+    $username = (string) auth_config('DB_USERNAME', 'root');
+    $password = (string) auth_config('DB_PASSWORD', '');
 
     $connection = new PDO(
         "mysql:host={$host};port={$port};dbname={$database};charset=utf8mb4",
@@ -41,6 +72,30 @@ function auth_database(): PDO
     );
 
     return $connection;
+}
+
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    $sessionDriver = (string) auth_config('POS_SESSION_DRIVER', getenv('VERCEL') ? 'database' : 'file');
+    if ($sessionDriver === 'database') {
+        configure_database_session(
+            auth_database(),
+            max(60, (int) auth_config('SESSION_LIFETIME', 120)) * 60
+        );
+    } else {
+        $sessionDirectory = dirname(__DIR__) . '/API/storage/framework/auth_sessions';
+        if (!is_dir($sessionDirectory)) {
+            mkdir($sessionDirectory, 0775, true);
+        }
+        session_save_path($sessionDirectory);
+    }
+
+    session_set_cookie_params([
+        'httponly' => true,
+        'secure' => auth_request_is_secure(),
+        'samesite' => 'Lax',
+        'path' => '/',
+    ]);
+    session_start();
 }
 
 function auth_captcha_create(): string
