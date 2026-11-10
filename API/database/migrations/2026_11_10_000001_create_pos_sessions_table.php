@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -12,11 +12,17 @@ return new class extends Migration
             return;
         }
 
-        Schema::create('pos_sessions', function (Blueprint $table) {
-            $table->string('id', 128)->primary();
-            $table->longBlob('payload');
-            $table->unsignedInteger('last_activity')->index();
-        });
+        // Blueprint::longBlob() tidak tersedia di versi Laravel ini, jadi pakai SQL langsung
+        // (sama dengan tabel yang dibuat DatabaseSessionHandler).
+        DB::statement(
+            'CREATE TABLE pos_sessions (
+                id VARCHAR(128) NOT NULL,
+                payload LONGBLOB NOT NULL,
+                last_activity INT UNSIGNED NOT NULL,
+                PRIMARY KEY (id),
+                KEY pos_sessions_last_activity_index (last_activity)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci'
+        );
     }
 
     public function down(): void

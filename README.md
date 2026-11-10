@@ -22,11 +22,13 @@ APP_DEBUG=false
 APP_URL=https://domain-vercel-anda.vercel.app
 
 DB_CONNECTION=mysql
-DB_HOST=202.10.43.5
-DB_PORT=3306
-DB_DATABASE=morh9212_putra_motor
-DB_USERNAME=morh9212_putra_motor
+DB_HOST=HOST_MYSQL_PUBLIK
+DB_PORT=4000
+DB_DATABASE=putra_motor
+DB_USERNAME=USERNAME_DATABASE
 DB_PASSWORD=PASSWORD_DATABASE
+# Wajib untuk MySQL publik yang memakai TLS (TiDB Cloud, Aiven, dll.)
+MYSQL_ATTR_SSL_CA=/etc/ssl/certs/ca-certificates.crt
 
 POS_SESSION_DRIVER=database
 SESSION_LIFETIME=120
@@ -38,8 +40,9 @@ Tambahkan juga `FONNTE_TOKEN` dan `FONNTE_API_URL` jika fitur reset password
 WhatsApp digunakan. Jangan commit file `API/.env` atau nilai password ke Git.
 
 `DB_HOST=localhost` hanya berlaku jika aplikasi berjalan di hosting yang sama
-dengan MySQL. Deployment Vercel harus memakai hostname/IP remote MySQL dan akses
-remote di Hostinger harus mengizinkan koneksi dari Vercel.
+dengan MySQL. Deployment Vercel harus memakai MySQL yang bisa diakses publik
+(misalnya TiDB Cloud atau Aiven). Shared hosting seperti cPanel Rumahweb biasanya
+memblokir port 3306 dari luar sehingga Vercel akan timeout.
 
 ### Database production
 

@@ -17,3 +17,4 @@ API/storage/framework/sessions/*
 API/storage/framework/views/*
 API/storage/framework/auth_sessions/*
 API/storage/logs/*
+tools
