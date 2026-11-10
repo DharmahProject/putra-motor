@@ -8,9 +8,15 @@ return new class extends Migration
 {
     public function up(): void
     {
+        // Dipisah per kolom: TiDB tidak mendukung ->after() ke kolom yang baru
+        // ditambahkan dalam satu perintah ALTER yang sama.
         Schema::table('users', function (Blueprint $table) {
             $table->string('role', 50)->default('Kasir')->after('password');
+        });
+        Schema::table('users', function (Blueprint $table) {
             $table->json('permissions')->nullable()->after('role');
+        });
+        Schema::table('users', function (Blueprint $table) {
             $table->boolean('active')->default(true)->after('permissions');
         });
 

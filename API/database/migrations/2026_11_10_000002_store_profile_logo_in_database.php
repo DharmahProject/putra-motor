@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -10,14 +11,16 @@ return new class extends Migration
     {
         $hasLogoData = Schema::hasColumn('profiles', 'logo_data');
         $hasLogoMime = Schema::hasColumn('profiles', 'logo_mime');
-        Schema::table('profiles', function (Blueprint $table) use ($hasLogoData, $hasLogoMime) {
-            if (!$hasLogoData) {
-                $table->longBlob('logo_data')->nullable()->after('logo_path');
-            }
-            if (!$hasLogoMime) {
+        // Dipisah per kolom agar kompatibel dengan TiDB (lihat migration settings).
+        // Blueprint::longBlob() tidak tersedia di versi Laravel ini, jadi pakai SQL langsung.
+        if (!$hasLogoData) {
+            DB::statement('ALTER TABLE profiles ADD COLUMN logo_data LONGBLOB NULL AFTER logo_path');
+        }
+        if (!$hasLogoMime) {
+            Schema::table('profiles', function (Blueprint $table) {
                 $table->string('logo_mime', 100)->nullable()->after('logo_data');
-            }
-        });
+            });
+        }
     }
 
     public function down(): void

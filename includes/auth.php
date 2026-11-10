@@ -23,6 +23,7 @@ function auth_configuration(): array
 
     foreach ([
         'DB_HOST', 'DB_PORT', 'DB_DATABASE', 'DB_USERNAME', 'DB_PASSWORD',
+        'MYSQL_ATTR_SSL_CA', 'DB_CONNECT_TIMEOUT',
         'POS_SESSION_DRIVER', 'SESSION_LIFETIME', 'POS_APP_URL',
         'FONNTE_API_URL', 'FONNTE_TOKEN',
     ] as $key) {
@@ -54,21 +55,31 @@ function auth_database(): PDO
         return $connection;
     }
 
-    $host = (string) auth_config('DB_HOST', '202.10.43.5');
+    $host = (string) auth_config('DB_HOST', '127.0.0.1');
     $port = (string) auth_config('DB_PORT', '3306');
     $database = (string) auth_config('DB_DATABASE', 'bengkel_pos');
     $username = (string) auth_config('DB_USERNAME', 'root');
     $password = (string) auth_config('DB_PASSWORD', '');
 
+    $options = [
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+        PDO::ATTR_EMULATE_PREPARES => false,
+        // Gagal cepat jika database tidak terjangkau, bukan menunggu 30 detik.
+        PDO::ATTR_TIMEOUT => max(1, (int) auth_config('DB_CONNECT_TIMEOUT', 8)),
+    ];
+
+    // Layanan MySQL publik (TiDB Cloud, Aiven, dll.) mewajibkan koneksi TLS.
+    $sslCa = (string) auth_config('MYSQL_ATTR_SSL_CA', '');
+    if ($sslCa !== '' && defined('PDO::MYSQL_ATTR_SSL_CA')) {
+        $options[PDO::MYSQL_ATTR_SSL_CA] = $sslCa;
+    }
+
     $connection = new PDO(
         "mysql:host={$host};port={$port};dbname={$database};charset=utf8mb4",
         $username,
         $password,
-        [
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-            PDO::ATTR_EMULATE_PREPARES => false,
-        ]
+        $options
     );
 
     return $connection;
