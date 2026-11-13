@@ -154,6 +154,7 @@ class TransaksiController extends Controller
             'terbilang' => Terbilang::rupiah((int) $record->total),
             'groups' => $this->invoiceGroups($record),
             'banks' => $this->invoiceBanks(),
+            'qris' => $this->qrisDataUri(),
         ])->setPaper('a4');
 
         return $pdf->download('kwitansi-'.$record->nomor.'.pdf');
@@ -412,6 +413,17 @@ class TransaksiController extends Controller
             'atas_nama' => $names ? implode(' / ', array_unique($names)) : '-',
             'rekening' => $rekening,
         ];
+    }
+
+    private function qrisDataUri(): ?string
+    {
+        $path = base_path('../qris.jpeg');
+        if (! is_file($path)) {
+            return null;
+        }
+
+        // File asli dipakai apa adanya supaya pola QR tidak rusak oleh kompresi ulang.
+        return 'data:image/jpeg;base64,'.base64_encode((string) file_get_contents($path));
     }
 
     private function logoDataUri(): ?string
