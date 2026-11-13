@@ -49,22 +49,21 @@
         .summary .grand .colon,
         .summary .grand .amount { padding-top: 7px; padding-bottom: 7px; color: #fff; background: #A8874A; font-size: 12px; font-weight: bold; }
         .summary .grand .label { padding-left: 8px; }
-        .bank-title { margin: 16px 0 6px; color: #806432; font-size: 13px; font-weight: bold; }
-        .bank .key { width: 92px; color: #5c4a30; }
-        .bank .colon { width: 14px; }
-        .bank .value { font-weight: bold; }
-        .bank td { padding: 2px 0; vertical-align: top; }
-        .payment-row { margin-top: 14px; page-break-inside: avoid; }
-        .payment-info { width: 62%; vertical-align: top; }
-        .qris { width: 38%; vertical-align: top; text-align: right; }
-        .qris img { width: 150px; height: auto; }
-        .pay { margin-top: 0; }
+        .pay { margin-top: 14px; }
         .pay .key { width: 140px; color: #5c4a30; }
         .pay .colon { width: 14px; }
         .pay .value { font-weight: bold; }
         .pay td { padding: 2px 0; }
-        .signs { margin-top: 52px; }
-        .signs td { width: 50%; text-align: center; vertical-align: top; }
+        .bank-title { margin: 14px 0 6px; color: #806432; font-size: 13px; font-weight: bold; }
+        .bank .key { width: 92px; color: #5c4a30; }
+        .bank .colon { width: 14px; }
+        .bank .value { font-weight: bold; }
+        .bank td { padding: 2px 0; vertical-align: top; }
+        .footer-row { margin-top: 14px; page-break-inside: avoid; }
+        .footer-row td { vertical-align: top; }
+        .qris-cell { width: 50%; }
+        .qris img { width: 95px; height: auto; }
+        .sign-cell { width: 50%; text-align: center; }
         .sign-label { color: #806432; font-size: 12px; font-weight: bold; }
         .sign-name { margin-top: 68px; color: #3c2a12; font-size: 12px; font-weight: bold; }
         .sign-line { width: 180px; margin: 6px auto 0; border-bottom: 1px dotted #806432; }
@@ -184,46 +183,37 @@
         </tr>
     </table>
 
-    <table class="payment-row">
-        <tr>
-            <td class="payment-info">
-                <table class="pay">
-                    <tr><td class="key">Metode Pembayaran</td><td class="colon">:</td><td class="value">{{ $metode }}</td></tr>
-                    <tr><td class="key">Terbilang</td><td class="colon">:</td><td class="value">{{ $terbilang }}</td></tr>
-                </table>
+    <table class="pay">
+        <tr><td class="key">Metode Pembayaran</td><td class="colon">:</td><td class="value">{{ $metode }}</td></tr>
+        <tr><td class="key">Terbilang</td><td class="colon">:</td><td class="value">{{ $terbilang }}</td></tr>
+    </table>
 
-                <div class="bank-title">Informasi Pembayaran</div>
-                <table class="bank">
-                    <tr><td class="key">Atas Nama</td><td class="colon">:</td><td class="value">{{ $banks['atas_nama'] }}</td></tr>
-                    <tr>
-                        <td class="key">No. Rekening</td>
-                        <td class="colon">:</td>
-                        <td class="value">
-                            @forelse($banks['rekening'] as $rekening)
-                                {{ $rekening }}@if(! $loop->last)<br>@endif
-                            @empty
-                                -
-                            @endforelse
-                        </td>
-                    </tr>
-                </table>
+    <div class="bank-title">Informasi Pembayaran</div>
+    <table class="bank">
+        <tr><td class="key">Atas Nama</td><td class="colon">:</td><td class="value">{{ $banks['atas_nama'] }}</td></tr>
+        <tr>
+            <td class="key">No. Rekening</td>
+            <td class="colon">:</td>
+            <td class="value">
+                @forelse($banks['rekening'] as $rekening)
+                    {{ $rekening }}@if(! $loop->last)<br>@endif
+                @empty
+                    -
+                @endforelse
             </td>
-            @if($qris)
-                <td class="qris">
-                    <img src="{{ $qris }}" alt="QRIS Bengkel Putra Motor">
-                </td>
-            @endif
         </tr>
     </table>
 
-    <table class="signs">
+    <table class="footer-row">
         <tr>
-            <td>
-                <div class="sign-label">Pelanggan</div>
-                <div class="sign-name">{{ $pelanggan }}</div>
-                <div class="sign-line"></div>
+            <td class="qris-cell">
+                @if($qris)
+                    <div class="qris">
+                        <img src="{{ $qris }}" alt="QRIS Bengkel Putra Motor">
+                    </div>
+                @endif
             </td>
-            <td>
+            <td class="sign-cell">
                 <div class="sign-label">Kasir / Service Advisor</div>
                 <div class="sign-name">{{ $advisor }}</div>
                 <div class="sign-line"></div>
