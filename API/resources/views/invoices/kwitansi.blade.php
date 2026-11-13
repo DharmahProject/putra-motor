@@ -54,10 +54,11 @@
         .bank .colon { width: 14px; }
         .bank .value { font-weight: bold; }
         .bank td { padding: 2px 0; vertical-align: top; }
-        .qris { margin-top: 14px; page-break-inside: avoid; }
-        .qris-label { margin-bottom: 6px; color: #806432; font-size: 12px; font-weight: bold; }
-        .qris img { width: 168px; height: auto; }
-        .pay { margin-top: 14px; }
+        .payment-row { margin-top: 14px; page-break-inside: avoid; }
+        .payment-info { width: 62%; vertical-align: top; }
+        .qris { width: 38%; vertical-align: top; text-align: right; }
+        .qris img { width: 150px; height: auto; }
+        .pay { margin-top: 0; }
         .pay .key { width: 140px; color: #5c4a30; }
         .pay .colon { width: 14px; }
         .pay .value { font-weight: bold; }
@@ -183,31 +184,35 @@
         </tr>
     </table>
 
-    @if($qris)
-        <div class="qris">
-            <div class="qris-label">QRIS</div>
-            <img src="{{ $qris }}" alt="QRIS Bengkel Putra Motor">
-        </div>
-    @endif
-
-    <table class="pay">
-        <tr><td class="key">Metode Pembayaran</td><td class="colon">:</td><td class="value">{{ $metode }}</td></tr>
-        <tr><td class="key">Terbilang</td><td class="colon">:</td><td class="value">{{ $terbilang }}</td></tr>
-    </table>
-
-    <div class="bank-title">Informasi Pembayaran</div>
-    <table class="bank">
-        <tr><td class="key">Atas Nama</td><td class="colon">:</td><td class="value">{{ $banks['atas_nama'] }}</td></tr>
+    <table class="payment-row">
         <tr>
-            <td class="key">No. Rekening</td>
-            <td class="colon">:</td>
-            <td class="value">
-                @forelse($banks['rekening'] as $rekening)
-                    {{ $rekening }}@if(! $loop->last)<br>@endif
-                @empty
-                    -
-                @endforelse
+            <td class="payment-info">
+                <table class="pay">
+                    <tr><td class="key">Metode Pembayaran</td><td class="colon">:</td><td class="value">{{ $metode }}</td></tr>
+                    <tr><td class="key">Terbilang</td><td class="colon">:</td><td class="value">{{ $terbilang }}</td></tr>
+                </table>
+
+                <div class="bank-title">Informasi Pembayaran</div>
+                <table class="bank">
+                    <tr><td class="key">Atas Nama</td><td class="colon">:</td><td class="value">{{ $banks['atas_nama'] }}</td></tr>
+                    <tr>
+                        <td class="key">No. Rekening</td>
+                        <td class="colon">:</td>
+                        <td class="value">
+                            @forelse($banks['rekening'] as $rekening)
+                                {{ $rekening }}@if(! $loop->last)<br>@endif
+                            @empty
+                                -
+                            @endforelse
+                        </td>
+                    </tr>
+                </table>
             </td>
+            @if($qris)
+                <td class="qris">
+                    <img src="{{ $qris }}" alt="QRIS Bengkel Putra Motor">
+                </td>
+            @endif
         </tr>
     </table>
 
