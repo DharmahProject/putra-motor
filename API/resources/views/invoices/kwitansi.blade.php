@@ -54,7 +54,7 @@
         .bank .colon { width: 14px; }
         .bank .value { font-weight: bold; }
         .bank td { padding: 2px 0; vertical-align: top; }
-        .qris { margin-top: 12px; }
+        .qris { margin-top: 14px; page-break-inside: avoid; }
         .qris-label { margin-bottom: 6px; color: #806432; font-size: 12px; font-weight: bold; }
         .qris img { width: 168px; height: auto; }
         .pay { margin-top: 14px; }
@@ -183,6 +183,13 @@
         </tr>
     </table>
 
+    @if($qris)
+        <div class="qris">
+            <div class="qris-label">QRIS</div>
+            <img src="{{ $qris }}" alt="QRIS Bengkel Putra Motor">
+        </div>
+    @endif
+
     <table class="pay">
         <tr><td class="key">Metode Pembayaran</td><td class="colon">:</td><td class="value">{{ $metode }}</td></tr>
         <tr><td class="key">Terbilang</td><td class="colon">:</td><td class="value">{{ $terbilang }}</td></tr>
@@ -203,13 +210,6 @@
             </td>
         </tr>
     </table>
-
-    @if($qris)
-        <div class="qris">
-            <div class="qris-label">QRIS</div>
-            <img src="{{ $qris }}" alt="QRIS Bengkel Putra Motor">
-        </div>
-    @endif
 
     <table class="signs">
         <tr>
