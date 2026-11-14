@@ -54,19 +54,19 @@
         .pay .colon { width: 14px; }
         .pay .value { font-weight: bold; }
         .pay td { padding: 2px 0; }
-        .bank-title { margin: 14px 0 6px; color: #806432; font-size: 13px; font-weight: bold; }
+        .pay-sign { margin-top: 12px; page-break-inside: avoid; }
+        .bank-cell { width: 50%; vertical-align: top; }
+        .bank-title { margin: 0 0 6px; color: #806432; font-size: 13px; font-weight: bold; }
         .bank .key { width: 92px; color: #5c4a30; }
         .bank .colon { width: 14px; }
         .bank .value { font-weight: bold; }
         .bank td { padding: 2px 0; vertical-align: top; }
-        .footer-row { margin-top: 14px; page-break-inside: avoid; }
-        .footer-row td { vertical-align: top; }
-        .qris-cell { width: 50%; }
-        .qris img { width: 95px; height: auto; }
-        .sign-cell { width: 50%; text-align: center; }
+        .qris-cell { width: 22%; vertical-align: top; text-align: center; }
+        .qris img { width: 118px; height: auto; }
+        .sign-cell { width: 28%; vertical-align: bottom; text-align: center; }
         .sign-label { color: #806432; font-size: 12px; font-weight: bold; }
-        .sign-name { margin-top: 68px; color: #3c2a12; font-size: 12px; font-weight: bold; }
-        .sign-line { width: 180px; margin: 6px auto 0; border-bottom: 1px dotted #806432; }
+        .sign-name { margin-top: 42px; color: #3c2a12; font-size: 12px; font-weight: bold; }
+        .sign-line { width: 160px; margin: 6px auto 0; border-bottom: 1px dotted #806432; }
         .thanks { position: fixed; bottom: -48px; left: 0; right: 0; padding-top: 8px; border-top: 3px solid #A8874A; color: #806432; font-size: 10px; font-style: italic; text-align: center; line-height: 1.5; }
     </style>
 </head>
@@ -188,29 +188,28 @@
         <tr><td class="key">Terbilang</td><td class="colon">:</td><td class="value">{{ $terbilang }}</td></tr>
     </table>
 
-    <div class="bank-title">Informasi Pembayaran</div>
-    <table class="bank">
-        <tr><td class="key">Atas Nama</td><td class="colon">:</td><td class="value">{{ $banks['atas_nama'] }}</td></tr>
+    <table class="pay-sign">
         <tr>
-            <td class="key">No. Rekening</td>
-            <td class="colon">:</td>
-            <td class="value">
-                @forelse($banks['rekening'] as $rekening)
-                    {{ $rekening }}@if(! $loop->last)<br>@endif
-                @empty
-                    -
-                @endforelse
+            <td class="bank-cell">
+                <div class="bank-title">Informasi Pembayaran</div>
+                <table class="bank">
+                    <tr><td class="key">Atas Nama</td><td class="colon">:</td><td class="value">{{ $banks['atas_nama'] }}</td></tr>
+                    <tr>
+                        <td class="key">No. Rekening</td>
+                        <td class="colon">:</td>
+                        <td class="value">
+                            @forelse($banks['rekening'] as $rekening)
+                                {{ $rekening }}@if(! $loop->last)<br>@endif
+                            @empty
+                                -
+                            @endforelse
+                        </td>
+                    </tr>
+                </table>
             </td>
-        </tr>
-    </table>
-
-    <table class="footer-row">
-        <tr>
             <td class="qris-cell">
                 @if($qris)
-                    <div class="qris">
-                        <img src="{{ $qris }}" alt="QRIS Bengkel Putra Motor">
-                    </div>
+                    <img src="{{ $qris }}" alt="QRIS Bengkel Putra Motor">
                 @endif
             </td>
             <td class="sign-cell">
